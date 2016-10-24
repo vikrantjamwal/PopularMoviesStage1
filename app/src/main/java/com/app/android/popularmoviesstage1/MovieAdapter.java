@@ -30,7 +30,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         ImageView imageView = (ImageView) gridItemView.findViewById(R.id.movie_image);
 
-        Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w342"+currentMovie.getThumbnail()).into(imageView);
+        Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w185"+currentMovie.getThumbnail()).into(imageView);
 
         return gridItemView;
     }

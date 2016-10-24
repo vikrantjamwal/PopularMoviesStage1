@@ -24,9 +24,12 @@ import java.util.ArrayList;
 public class MoviesListFragment extends Fragment {
 
     private static final String LOG_TAG = MoviesListFragment.class.getSimpleName();
+    private static final String MOVIES_KEY = "movies_key";
 
     GridView mMoviesGridView;
     MovieAdapter mMovieAdapter;
+    ArrayList<Movie> mMovies = new ArrayList<>();
+    int mCurrentPage = 1;
 
     public MoviesListFragment() {
     }
@@ -40,6 +43,14 @@ public class MoviesListFragment extends Fragment {
         mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         mMoviesGridView.setAdapter(mMovieAdapter);
 
+        if (savedInstanceState != null){
+            mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
+            mMovieAdapter.addAll(mMovies);
+            mCurrentPage = savedInstanceState.getInt("int_key");
+        }else {
+            showMovies();
+        }
+
         mMoviesGridView.setOnScrollListener(new EndlessScrollListener());
 
         mMoviesGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -49,14 +60,14 @@ public class MoviesListFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
         return rootView;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        showMovies();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(MOVIES_KEY, mMovies);
+        outState.putInt("int_key", mCurrentPage);
     }
 
     private void showMovies(){
@@ -67,7 +78,7 @@ public class MoviesListFragment extends Fragment {
     public class EndlessScrollListener implements AbsListView.OnScrollListener{
 
         private int visibleThreshold = 5;
-        private int currentPage = 1;
+        //private int currentPage = 1;
         private int previousTotal = 0;
         private boolean loading = true;
 
@@ -80,12 +91,12 @@ public class MoviesListFragment extends Fragment {
                 if (totalItemCount > previousTotal) {
                     loading = false;
                     previousTotal = totalItemCount;
-                    currentPage++;
+                    mCurrentPage++;
                 }
             }
             if (!loading &&
                     (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                new FetchMovies().execute("popular", String.valueOf(currentPage+1));
+                new FetchMovies().execute("popular", String.valueOf(mCurrentPage+1));
                 loading = true;
             }
         }
@@ -116,7 +127,7 @@ public class MoviesListFragment extends Fragment {
                         .appendPath("3")
                         .appendPath("movie")
                         .appendPath(strings[0])
-                        .appendQueryParameter("api_key", "e04c4159dcee3bb15a401765e3783df6")
+                        .appendQueryParameter("api_key", "")
                         .appendQueryParameter("page", strings[1]);
 
                 URL url = new URL(builder.toString());
@@ -169,9 +180,11 @@ public class MoviesListFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> movies) {
             super.onPostExecute(movies);
             if(movies != null) {
+                for (int i = 0; i < 20; i++) {
+                    mMovies.add(movies.get(i));
+                }
                 mMovieAdapter.addAll(movies);
             }
         }
     }
-
 }
