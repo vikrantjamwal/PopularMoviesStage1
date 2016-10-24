@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -39,6 +40,8 @@ public class MoviesListFragment extends Fragment {
         mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         mMoviesGridView.setAdapter(mMovieAdapter);
 
+        mMoviesGridView.setOnScrollListener(new EndlessScrollListener());
+
         mMoviesGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -58,7 +61,39 @@ public class MoviesListFragment extends Fragment {
 
     private void showMovies(){
         FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute("popular", "2");
+        fetchMovies.execute("popular", "1");
+    }
+
+    public class EndlessScrollListener implements AbsListView.OnScrollListener{
+
+        private int visibleThreshold = 5;
+        private int currentPage = 1;
+        private int previousTotal = 0;
+        private boolean loading = true;
+
+        public EndlessScrollListener(){}
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            if (loading) {
+                if (totalItemCount > previousTotal) {
+                    loading = false;
+                    previousTotal = totalItemCount;
+                    currentPage++;
+                }
+            }
+            if (!loading &&
+                    (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                new FetchMovies().execute("popular", String.valueOf(currentPage+1));
+                loading = true;
+            }
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
     }
 
     public class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
@@ -81,7 +116,7 @@ public class MoviesListFragment extends Fragment {
                         .appendPath("3")
                         .appendPath("movie")
                         .appendPath(strings[0])
-                        .appendQueryParameter("api_key", "")
+                        .appendQueryParameter("api_key", "e04c4159dcee3bb15a401765e3783df6")
                         .appendQueryParameter("page", strings[1]);
 
                 URL url = new URL(builder.toString());
@@ -133,8 +168,9 @@ public class MoviesListFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             super.onPostExecute(movies);
-            mMovieAdapter.clear();
-            mMovieAdapter.addAll(movies);
+            if(movies != null) {
+                mMovieAdapter.addAll(movies);
+            }
         }
     }
 
