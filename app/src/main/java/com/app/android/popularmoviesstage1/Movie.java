@@ -5,10 +5,10 @@ public class Movie {
     private String mTitle;
     private String mThumbnail;
     private String mOverview;
-    private int mRating;
+    private double mRating;
     private String mDate;
 
-    public Movie(String mTitle, String mThumbnail, String mOverview, int mRating, String mDate) {
+    public Movie(String mTitle, String mThumbnail, String mOverview, double mRating, String mDate) {
         this.mTitle = mTitle;
         this.mThumbnail = mThumbnail;
         this.mOverview = mOverview;
@@ -28,7 +28,7 @@ public class Movie {
         return mOverview;
     }
 
-    public int getRating() {
+    public double getRating() {
         return mRating;
     }
 
