@@ -1,5 +1,6 @@
 package com.app.android.popularmoviesstage1;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import java.io.BufferedReader;
@@ -37,8 +39,13 @@ public class MoviesListFragment extends Fragment {
         mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         mMoviesGridView.setAdapter(mMovieAdapter);
 
-        FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute("top_rated","2");
+        mMoviesGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), MovieDetail.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -46,10 +53,12 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        showMovies();
     }
 
     private void showMovies(){
-
+        FetchMovies fetchMovies = new FetchMovies();
+        fetchMovies.execute("popular", "2");
     }
 
     public class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
