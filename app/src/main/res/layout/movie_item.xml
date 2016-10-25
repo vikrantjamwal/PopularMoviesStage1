@@ -6,7 +6,7 @@
     <ImageView
         android:id="@+id/movie_image"
         android:layout_width="match_parent"
-        android:scaleType="fitXY"
-        android:layout_height="310dp" />
+        android:layout_height="310dp"
+        android:scaleType="fitXY" />
 
 </FrameLayout>

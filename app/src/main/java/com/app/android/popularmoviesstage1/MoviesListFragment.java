@@ -43,11 +43,11 @@ public class MoviesListFragment extends Fragment {
         mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         mMoviesGridView.setAdapter(mMovieAdapter);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
             mMovieAdapter.addAll(mMovies);
             mCurrentPage = savedInstanceState.getInt("int_key");
-        }else {
+        } else {
             showMovies();
         }
 
@@ -57,7 +57,9 @@ public class MoviesListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), MovieDetail.class);
+                intent.putExtra("movie_object", mMovies.get(i));
                 startActivity(intent);
+                //Toast.makeText(getActivity(), ""+i, Toast.LENGTH_SHORT).show();
             }
         });
         return rootView;
@@ -70,19 +72,20 @@ public class MoviesListFragment extends Fragment {
         outState.putInt("int_key", mCurrentPage);
     }
 
-    private void showMovies(){
+    private void showMovies() {
         FetchMovies fetchMovies = new FetchMovies();
         fetchMovies.execute("popular", "1");
     }
 
-    public class EndlessScrollListener implements AbsListView.OnScrollListener{
+    public class EndlessScrollListener implements AbsListView.OnScrollListener {
 
         private int visibleThreshold = 5;
         //private int currentPage = 1;
         private int previousTotal = 0;
         private boolean loading = true;
 
-        public EndlessScrollListener(){}
+        public EndlessScrollListener() {
+        }
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -96,7 +99,7 @@ public class MoviesListFragment extends Fragment {
             }
             if (!loading &&
                     (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                new FetchMovies().execute("popular", String.valueOf(mCurrentPage+1));
+                new FetchMovies().execute("popular", String.valueOf(mCurrentPage + 1));
                 loading = true;
             }
         }
@@ -179,7 +182,7 @@ public class MoviesListFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             super.onPostExecute(movies);
-            if(movies != null) {
+            if (movies != null) {
                 for (int i = 0; i < 20; i++) {
                     mMovies.add(movies.get(i));
                 }

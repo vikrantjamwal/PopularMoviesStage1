@@ -5,14 +5,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context="com.app.android.popularmoviesstage1.MovieDetailFragment">
 
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="#f92">
+            android:background="@color/titleBackground">
 
             <TextView
                 android:id="@+id/name_text"
@@ -20,20 +20,18 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="20dp"
-                android:layout_marginLeft="14dp"
-                android:text="The Martian"
+                android:layout_marginLeft="12dp"
                 android:textColor="#fff"
-                android:textSize="30dp" />
+                android:textSize="@dimen/title_size" />
         </FrameLayout>
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="200dp"
-            android:layout_height="230dp"
+            android:layout_height="250dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/frameLayout"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="12dp" />
 
         <TextView
@@ -41,10 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/imageView"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/imageView"
-            android:text=""
             android:textAppearance="?android:textAppearanceLarge" />
 
         <TextView
@@ -53,8 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/date_text"
             android:layout_below="@+id/date_text"
-            android:layout_marginTop="20dp"
-            android:text="" />
+            android:layout_marginTop="20dp" />
 
         <TextView
             android:id="@+id/overview_text"
@@ -64,7 +60,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="25dp"
-            android:text=""
             android:textAppearance="?android:textAppearanceMedium" />
     </RelativeLayout>
 </ScrollView>

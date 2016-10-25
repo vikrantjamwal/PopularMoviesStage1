@@ -29,8 +29,8 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         Movie currentMovie = getItem(position);
 
         ImageView imageView = (ImageView) gridItemView.findViewById(R.id.movie_image);
-
-        Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w185"+currentMovie.getThumbnail()).into(imageView);
+        String imgURL = "http://image.tmdb.org/t/p/w185" + currentMovie.getThumbnail();
+        Picasso.with(getContext()).load(imgURL).into(imageView);
 
         return gridItemView;
     }

@@ -4,17 +4,15 @@
     android:layout_height="match_parent"
     tools:context="com.app.android.popularmoviesstage1.MoviesListFragment">
 
-    <GridView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="3"
-        android:verticalSpacing="0dp"
         android:horizontalSpacing="0dp"
+        android:numColumns="3"
         android:stretchMode="columnWidth"
-        tools:context=".MainActivityFragment"
-        android:id="@+id/grid_view">
-    </GridView>
+        android:verticalSpacing="0dp"
+        tools:context=".MainActivityFragment" />
 
 </FrameLayout>
