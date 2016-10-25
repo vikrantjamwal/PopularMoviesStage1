@@ -1,9 +1,14 @@
 package com.app.android.popularmoviesstage1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,16 +45,25 @@ public class MoviesListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
 
+        TextView emptyTextView = (TextView) rootView.findViewById(R.id.empty_textview);
+
         mMoviesGridView = (GridView) rootView.findViewById(R.id.grid_view);
         mMovieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         mMoviesGridView.setAdapter(mMovieAdapter);
 
-        if (savedInstanceState != null) {
-            mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
-            mMovieAdapter.addAll(mMovies);
-            mCurrentPage = savedInstanceState.getInt("int_key");
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            if (savedInstanceState != null) {
+                mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
+                mMovieAdapter.addAll(mMovies);
+                mCurrentPage = savedInstanceState.getInt("page_key");
+            } else {
+                showMovies();
+            }
         } else {
-            showMovies();
+            emptyTextView.setText(R.string.no_internet_text);
         }
 
         mMoviesGridView.setOnScrollListener(new EndlessScrollListener());
@@ -59,7 +74,6 @@ public class MoviesListFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), MovieDetail.class);
                 intent.putExtra("movie_object", mMovies.get(i));
                 startActivity(intent);
-                //Toast.makeText(getActivity(), ""+i, Toast.LENGTH_SHORT).show();
             }
         });
         return rootView;
@@ -69,18 +83,19 @@ public class MoviesListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(MOVIES_KEY, mMovies);
-        outState.putInt("int_key", mCurrentPage);
+        outState.putInt("page_key", mCurrentPage);
     }
 
     private void showMovies() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String orderBy = sharedPref.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_default_value));
         FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute("popular", "1");
+        fetchMovies.execute(orderBy, "1");
     }
 
     public class EndlessScrollListener implements AbsListView.OnScrollListener {
 
-        private int visibleThreshold = 5;
-        //private int currentPage = 1;
+        private int visibleThreshold = 6;
         private int previousTotal = 0;
         private boolean loading = true;
 
@@ -99,14 +114,15 @@ public class MoviesListFragment extends Fragment {
             }
             if (!loading &&
                     (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                new FetchMovies().execute("popular", String.valueOf(mCurrentPage + 1));
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String orderBy = sharedPref.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_default_value));
+                new FetchMovies().execute(orderBy, String.valueOf(mCurrentPage + 1));
                 loading = true;
             }
         }
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-
         }
     }
 
@@ -130,7 +146,7 @@ public class MoviesListFragment extends Fragment {
                         .appendPath("3")
                         .appendPath("movie")
                         .appendPath(strings[0])
-                        .appendQueryParameter("api_key", "")
+                        .appendQueryParameter("api_key", BuildConfig.THE_MOVIEDB_KEY)
                         .appendQueryParameter("page", strings[1]);
 
                 URL url = new URL(builder.toString());
