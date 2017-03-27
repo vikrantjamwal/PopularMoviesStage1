@@ -22,7 +22,7 @@ This app will:
 ### What will I learn?
 * Fetch data from the Internet with theMovieDB API.
 * Use of adapters and custom list layouts to populate list views.
-* Incorporate libraries to simplify the amount of code i need to write
+* Incorporate libraries to simplify the amount of code i need to write.
 
 ### Build Configuration
 Add the following lines in `gradle.properties` file :
