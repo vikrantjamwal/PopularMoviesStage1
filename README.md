@@ -28,3 +28,7 @@ This app will:
 Add the following lines in `gradle.properties` file :
 
     themoviedbkey = "[KEY]"
+    
+Note:- Get api key from TMDb
+
+[TMDb]:https://www.themoviedb.org/
